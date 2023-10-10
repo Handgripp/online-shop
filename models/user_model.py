@@ -1,5 +1,6 @@
+import uuid
 from enum import Enum
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, String, UUID
 from database import Base
 from sqlalchemy.dialects.postgresql import ENUM
 
@@ -12,7 +13,7 @@ class RoleEnum(Enum):
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, index=True)
     email = Column(String, unique=True, index=True)
     password = Column(String)
     role = Column(ENUM(RoleEnum))
