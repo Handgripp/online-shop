@@ -1,5 +1,5 @@
 from database import SessionLocal
-from models.user_model import User, RoleEnum
+from models.user_model import User
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -8,7 +8,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 class UserRepository:
 
     @staticmethod
-    def create_user(email, password, role):
+    async def create_user(email, password, role):
         hashed_password = pwd_context.hash(password)
 
         db_user = User(email=email, password=hashed_password, role=role)
@@ -26,7 +26,7 @@ class UserRepository:
         return user
 
     @staticmethod
-    def get_user_by_email(email):
+    async def get_user_by_email(email):
         db = SessionLocal()
         user = db.query(User).filter_by(email=email).first()
         return user

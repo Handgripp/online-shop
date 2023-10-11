@@ -7,11 +7,11 @@ router = APIRouter()
 
 
 @router.post("/users")
-def create_user(user: UserCreate):
+async def create_user(user: UserCreate):
     role = None
 
-    user_in_db = UserRepository.get_user_by_email(user.email)
-    if user_in_db:
+    user_in_db = await UserRepository.get_user_by_email(user.email)
+    if user_in_db is not None:
         raise HTTPException(status_code=409, detail="User with this email already exists")
 
     if user.role == "Client":
@@ -19,7 +19,7 @@ def create_user(user: UserCreate):
     elif user.role == "Admin":
         role = RoleEnum.admin
 
-    user = UserRepository.create_user(user.email, user.password, role)
+    user = await UserRepository.create_user(user.email, user.password, role)
 
     return user
 
