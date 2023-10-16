@@ -8,12 +8,13 @@ router = APIRouter()
 
 @router.post("/shop/products")
 async def create_product(product: ProductCreate):
-    category = await CategoryRepository.get_category_by_id(product.category_id)
-    if not category:
-        raise HTTPException(status_code=404, detail="Category id does not exists")
     try:
+        category = await CategoryRepository.get_category_by_id(product.category_id)
+        if not category:
+            raise HTTPException(status_code=404, detail="Category id does not exists")
+
         new_product = await ProductRepository.create_product(product.name, product.description,
-                                                             product.price, product.quantity, product.category_id)
+                                                                 product.price, product.quantity, product.category_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail="Database error: " + str(e))
 

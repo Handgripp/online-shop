@@ -10,8 +10,8 @@ router = APIRouter()
 async def create_category(category: CategoryCreate):
     try:
         category = await CategoryRepository.create_category(category.name)
+
+        return category
+
     except Exception as e:
         raise HTTPException(status_code=500, detail="Database error: " + str(e))
-
-    return category
-
