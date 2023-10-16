@@ -1,15 +1,13 @@
-from database import SessionLocal
 from models.category_model import Category
-
+from sqlalchemy.orm import Session
 
 class CategoryRepository:
 
     @staticmethod
-    async def create_category(name):
+    async def create_category(db: Session, name):
 
         db_category = Category(name=name)
 
-        db = SessionLocal()
         db.add(db_category)
         db.commit()
 
@@ -21,7 +19,7 @@ class CategoryRepository:
         return category
 
     @staticmethod
-    async def get_category_by_id(category_id):
-        db = SessionLocal()
+    async def get_category_by_id(db: Session, category_id):
+
         category = db.query(Category).filter_by(id=category_id).first()
         return category

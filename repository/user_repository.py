@@ -1,6 +1,6 @@
-from database import SessionLocal
 from models.user_model import User
 from passlib.context import CryptContext
+from sqlalchemy.orm import Session
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -8,12 +8,11 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 class UserRepository:
 
     @staticmethod
-    async def create_user(email, password, role):
+    async def create_user(db: Session, email, password, role):
         hashed_password = pwd_context.hash(password)
 
         db_user = User(email=email, password=hashed_password, role=role)
 
-        db = SessionLocal()
         db.add(db_user)
         db.commit()
 
@@ -26,7 +25,6 @@ class UserRepository:
         return user
 
     @staticmethod
-    async def get_user_by_email(email):
-        db = SessionLocal()
+    async def get_user_by_email(db: Session, email):
         user = db.query(User).filter_by(email=email).first()
         return user

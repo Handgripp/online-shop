@@ -1,15 +1,15 @@
 from database import SessionLocal
 from models.product_model import Product
+from sqlalchemy.orm import Session
 
 
 class ProductRepository:
 
     @staticmethod
-    async def create_product(name, description, price, quantity, category_id):
+    async def create_product(db: Session, name, description, price, quantity, category_id):
 
         db_product = Product(name=name, description=description, price=price, quantity=quantity, category_id=category_id)
 
-        db = SessionLocal()
         db.add(db_product)
         db.commit()
 
