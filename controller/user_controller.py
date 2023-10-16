@@ -3,6 +3,7 @@ from models.user_model import RoleEnum
 from schemas.user_schemas import UserCreate
 from repository.user_repository import UserRepository
 
+
 router = APIRouter()
 
 
@@ -18,8 +19,10 @@ async def create_user(user: UserCreate):
         role = RoleEnum.client
     elif user.role == "Admin":
         role = RoleEnum.admin
-
-    user = await UserRepository.create_user(user.email, user.password, role)
+    try:
+        user = await UserRepository.create_user(user.email, user.password, role)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Database error: " + str(e))
 
     return user
 
