@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from sqlalchemy.exc import DataError
 from repository.category_repository import CategoryRepository
 from schemas.product_schemas import ProductCreate
 from repository.product_repository import ProductRepository
@@ -14,8 +15,13 @@ async def create_product(product: ProductCreate):
             raise HTTPException(status_code=404, detail="Category id does not exists")
 
         new_product = await ProductRepository.create_product(product.name, product.description,
-                                                                 product.price, product.quantity, product.category_id)
+                                                             product.price, product.quantity, product.category_id)
+
+        return new_product
+
+    except DataError as e:
+        raise HTTPException(status_code=400, detail="Invalid data: " + str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail="Database error: " + str(e))
 
-    return new_product
+

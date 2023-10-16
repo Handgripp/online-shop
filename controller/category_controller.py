@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-
+from sqlalchemy.exc import DataError
 from schemas.category_schemas import CategoryCreate
 from repository.category_repository import CategoryRepository
 
@@ -13,5 +13,7 @@ async def create_category(category: CategoryCreate):
 
         return category
 
+    except DataError as e:
+        raise HTTPException(status_code=400, detail="Invalid data: " + str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail="Database error: " + str(e))
