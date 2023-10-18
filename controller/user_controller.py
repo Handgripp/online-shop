@@ -26,7 +26,8 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
         return user
 
+    except HTTPException as http_error:
+        raise http_error
     except DataError as e:
         raise HTTPException(status_code=400, detail="Invalid data: " + str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Database error: " + str(e))
+

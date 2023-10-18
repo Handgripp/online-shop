@@ -40,7 +40,7 @@ class UserCreate(BaseModel):
             "examples": [
                 {
                     "email": "test@test.com",
-                    "password": "12345",
+                    "password": "Aa12345!",
                     "role": "Client"
                 }
             ]

@@ -23,3 +23,8 @@ class CategoryRepository:
 
         category = db.query(Category).filter_by(id=category_id).first()
         return category
+
+    @staticmethod
+    async def get_category_by_name(db: Session, name):
+        category = db.query(Category).filter_by(name=name).first()
+        return category

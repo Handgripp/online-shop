@@ -6,7 +6,7 @@ class ProductCreate(BaseModel):
     description: str
     price: int
     quantity: int
-    category_id: UUID4
+    category_name: str
 
     model_config = {
         "json_schema_extra": {
@@ -16,7 +16,7 @@ class ProductCreate(BaseModel):
                     "description": "Fast",
                     "price": 120,
                     "quantity": 12,
-                    "category_id": "1d153db3-201b-4e77-a5b3-b2d8b4a58df8"
+                    "category_name": "Cross"
                 }
             ]
         }
