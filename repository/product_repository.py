@@ -24,3 +24,7 @@ class ProductRepository:
 
         return product
 
+    @staticmethod
+    async def get_product_by_id(db: Session, product_id):
+        product = db.query(Product).filter_by(id=product_id).first()
+        return product

@@ -26,11 +26,11 @@ async def create_category(category: CategoryCreate, db: Session = Depends(get_db
         token = credentials.credentials
         check_token_bearer(token)
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-
+        print(category)
         user = await UserRepository.get_user_by_email(db, payload.get("user"))
-        category = await CategoryRepository.get_category_by_name(db, category.name)
+        category_from_db = await CategoryRepository.get_category_by_name(db, category.name)
 
-        if category:
+        if category_from_db:
             raise HTTPException(status_code=409, detail="Category with this name already exists")
 
         if user.role.name != "admin":

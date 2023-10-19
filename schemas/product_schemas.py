@@ -21,3 +21,21 @@ class ProductCreate(BaseModel):
             ]
         }
     }
+
+
+class AddProductToCart(BaseModel):
+    product_id: UUID4
+    quantity: int
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+
+                {
+                    "product_id": "",
+                    "quantity": 1
+                }
+
+            ]
+        }
+    }
