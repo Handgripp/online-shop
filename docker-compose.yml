@@ -9,3 +9,23 @@ services:
       - POSTGRES_DB=${DATABASE_NAME}
     ports:
       - "${DATABASE_PORT}:5432"
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+
+  worker:
+    build: .
+    depends_on:
+      - redis
+    command: rq worker --url redis://rq_redis:6379 email_queue
+
+  redis:
+    container_name: rq_redis
+    image: redis:latest
+    ports:
+      - "6379:6379"

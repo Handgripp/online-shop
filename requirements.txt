@@ -5,3 +5,6 @@ pydantic~=2.4.2
 python-dotenv~=1.0.0
 passlib~=1.7.4
 jose~=1.0.0
+starlette~=0.27.0
+rq~=1.15.1
+redis~=5.0.1
