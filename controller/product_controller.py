@@ -7,7 +7,6 @@ from controller.auth import check_token_bearer
 from database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import DataError
-
 from repository.cart_repository import CartRepository
 from repository.category_repository import CategoryRepository
 from repository.user_repository import UserRepository
@@ -23,7 +22,8 @@ router = APIRouter()
 
 
 @router.post("/shop/products")
-async def create_product(add_product_to_db: ProductCreate, db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Security(security)):
+async def create_product(add_product_to_db: ProductCreate, db: Session = Depends(get_db),
+                         credentials: HTTPAuthorizationCredentials = Security(security)):
     try:
         token = credentials.credentials
         check_token_bearer(token)
@@ -39,7 +39,8 @@ async def create_product(add_product_to_db: ProductCreate, db: Session = Depends
             raise HTTPException(status_code=404, detail="Category name does not exists")
 
         new_product = await ProductRepository.create_product(db, add_product_to_db.name, add_product_to_db.description,
-                                                             add_product_to_db.price, add_product_to_db.quantity, category.id)
+                                                             add_product_to_db.price, add_product_to_db.quantity,
+                                                             category.id)
 
         return new_product
 
@@ -51,26 +52,40 @@ async def create_product(add_product_to_db: ProductCreate, db: Session = Depends
 
 
 @router.post("/shop")
-async def add_products_to_cart(product_to_cart: AddProductToCart, db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Security(security)):
+async def add_products_to_cart(purchased_products: AddProductToCart, db: Session = Depends(get_db),
+                               credentials: HTTPAuthorizationCredentials = Security(security)):
     try:
-        client_cart = None
         token = credentials.credentials
         check_token_bearer(token)
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
-        product = await ProductRepository.get_product_by_id(db, product_to_cart.product_id)
+        product = await ProductRepository.get_product_by_id(db, purchased_products.product_id)
         user = await UserRepository.get_user_by_email(db, payload.get("user"))
         cart = await CartRepository.get_cart_by_user_id(db, user.id)
 
-        if not cart:
-            client_cart = await CartRepository.create_cart(db, product.price, user.id)
+        if not product.quantity >= purchased_products.quantity:
+            raise HTTPException(status_code=400, detail="Not enough quantity of this product available")
 
-        return client_cart
+        if not cart:
+            await CartRepository.create_cart(db, user.id)
+
+        cart_after_check = await CartRepository.get_cart_by_user_id(db, user.id)
+
+        product_to_cart = await CartRepository.add_products_to_cart(db, cart_after_check.id,
+                                                                    purchased_products.product_id,
+                                                                    purchased_products.quantity)
+
+        product_value_to_cart = (product.price * purchased_products.quantity) + cart_after_check.value
+
+        updated_quantity = product.quantity - purchased_products.quantity
+
+        await ProductRepository.update_cart_value(db, updated_quantity, product.id)
+        await CartRepository.update_cart_value(db, product_value_to_cart, user.id)
+
+        return product_to_cart
 
     except HTTPException as http_error:
         raise http_error
 
     except DataError as e:
         raise HTTPException(status_code=400, detail="Invalid data: " + str(e))
-
-
