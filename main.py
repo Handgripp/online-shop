@@ -5,6 +5,7 @@ from controller.product_controller import router as product_router
 from controller.category_controller import router as category_router
 from controller.auth import router as auth_router
 from controller.mailer import router as mailer_router
+from controller.transaction_controller import router as transaction_router
 from database import Base, engine
 
 
@@ -15,6 +16,7 @@ app.include_router(product_router)
 app.include_router(category_router)
 app.include_router(auth_router)
 app.include_router(mailer_router)
+app.include_router(transaction_router)
 
 Base.metadata.create_all(bind=engine)
 

@@ -28,3 +28,8 @@ class UserRepository:
     async def get_user_by_email(db: Session, email):
         user = db.query(User).filter_by(email=email).first()
         return user
+
+    @staticmethod
+    async def get_user_by_id(db: Session, user_id):
+        user = db.query(User).filter_by(id=user_id).first()
+        return user
