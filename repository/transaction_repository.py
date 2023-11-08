@@ -35,8 +35,8 @@ class TransactionRepository:
 
         transaction = db.query(Transaction).filter_by(user_id=user_id).first()
         return transaction
-    #
-    # @staticmethod
-    # async def get_category_by_name(db: Session, name):
-    #     category = db.query(Category).filter_by(name=name).first()
-    #     return category
+
+    @staticmethod
+    async def get_transaction_by_cart_id(db: Session, cart_id):
+        transaction = db.query(Transaction).filter_by(cart_id=cart_id).first()
+        return transaction

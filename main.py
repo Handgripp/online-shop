@@ -4,7 +4,7 @@ from controller.user_controller import router as user_router
 from controller.product_controller import router as product_router
 from controller.category_controller import router as category_router
 from controller.auth import router as auth_router
-from controller.mailer import router as mailer_router
+from services.mailer import router as mailer_router
 from controller.transaction_controller import router as transaction_router
 from database import Base, engine
 

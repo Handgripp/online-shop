@@ -36,6 +36,16 @@ class CartRepository:
         return cart
 
     @staticmethod
+    async def get_cart_by_id(db: Session, cart_id):
+        cart = db.query(Cart).filter_by(id=cart_id).first()
+        return cart
+
+    @staticmethod
+    async def get_all_carts_by_user_id(db: Session, user_id):
+        cart = db.query(Cart).filter_by(user_id=user_id).all()
+        return cart
+
+    @staticmethod
     async def add_products_to_cart(db: Session, cart_id, product_id, quantity):
         db_cart = CartToProduct(cart_id=cart_id, product_id=product_id, quantity=quantity)
 

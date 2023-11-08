@@ -13,6 +13,7 @@ from repository.user_repository import UserRepository
 from schemas.product_schemas import ProductCreate, AddProductToCart
 from repository.product_repository import ProductRepository
 
+
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
@@ -51,6 +52,28 @@ async def create_product(add_product_to_db: ProductCreate, db: Session = Depends
         raise HTTPException(status_code=400, detail="Invalid data: " + str(e))
 
 
+@router.post("/shop/cart")
+async def create_cart(db: Session = Depends(get_db),
+                      credentials: HTTPAuthorizationCredentials = Security(security)):
+    try:
+        token = credentials.credentials
+        check_token_bearer(token)
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user = await UserRepository.get_user_by_email(db, payload.get("user"))
+        cart_id = CartRepository.get_cart_by_user_id(db, user.id)
+        if cart_id:
+            raise HTTPException(status_code=400, detail="You already have one cart")
+
+        cart = await CartRepository.create_cart(db, user.id)
+        return cart
+
+    except HTTPException as http_error:
+        raise http_error
+
+    except DataError as e:
+        raise HTTPException(status_code=400, detail="Invalid data: " + str(e))
+
+
 @router.post("/shop")
 async def add_products_to_cart(purchased_products: AddProductToCart, db: Session = Depends(get_db),
                                credentials: HTTPAuthorizationCredentials = Security(security)):
@@ -59,23 +82,18 @@ async def add_products_to_cart(purchased_products: AddProductToCart, db: Session
         check_token_bearer(token)
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
-        product = await ProductRepository.get_product_by_id(db, purchased_products.product_id)
+        product = await ProductRepository.get_product_by_name(db, purchased_products.product_name)
         user = await UserRepository.get_user_by_email(db, payload.get("user"))
-        cart = await CartRepository.get_cart_by_user_id(db, user.id)
+        cart = await CartRepository.get_cart_by_id(db, purchased_products.cart_id)
 
         if not product.quantity >= purchased_products.quantity:
             raise HTTPException(status_code=400, detail="Not enough quantity of this product available")
 
-        if not cart:
-            await CartRepository.create_cart(db, user.id)
-
-        cart_after_check = await CartRepository.get_cart_by_user_id(db, user.id)
-
-        product_to_cart = await CartRepository.add_products_to_cart(db, cart_after_check.id,
-                                                                    purchased_products.product_id,
+        product_to_cart = await CartRepository.add_products_to_cart(db, cart.id,
+                                                                    product.id,
                                                                     purchased_products.quantity)
 
-        product_value_to_cart = (product.price * purchased_products.quantity) + cart_after_check.value
+        product_value_to_cart = (product.price * purchased_products.quantity) + cart.value
 
         updated_quantity = product.quantity - purchased_products.quantity
 

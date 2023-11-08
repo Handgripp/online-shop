@@ -24,7 +24,8 @@ class ProductCreate(BaseModel):
 
 
 class AddProductToCart(BaseModel):
-    product_id: UUID4
+    product_name: str
+    cart_id: UUID4
     quantity: int
 
     model_config = {
@@ -32,8 +33,9 @@ class AddProductToCart(BaseModel):
             "examples": [
 
                 {
-                    "product_id": "",
-                    "quantity": 1
+                    "product_name": "KTM",
+                    "quantity": 1,
+                    "cart_id": ""
                 }
 
             ]
