@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, UUID, ForeignKey, Integer
+from sqlalchemy import Column, String, UUID, ForeignKey, Integer, DateTime, func
 from database import Base
 
 
@@ -12,3 +12,5 @@ class Product(Base):
     price = Column(Integer)
     quantity = Column(Integer)
     category_id = Column(UUID(as_uuid=True), ForeignKey('categories.id'))
+    created_at = Column(DateTime(), default=func.now())
+    updated_at = Column(DateTime(), onupdate=func.now())

@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, Depends, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
-from controller.auth import check_token_bearer
+from controller.auth_controller import check_token_bearer
 from services.mailer import queue, send_email
 from database import get_db
 from sqlalchemy.orm import Session

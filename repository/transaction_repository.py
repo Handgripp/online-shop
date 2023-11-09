@@ -17,7 +17,7 @@ class TransactionRepository:
             "id": db_transaction.id,
             "cart_id": db_transaction.cart_id,
             "user_id": db_transaction.user_id,
-            "is_paid": db_transaction.is_paid,
+            "status": db_transaction.status,
             "transaction_type": db_transaction.transaction_type
 
         }

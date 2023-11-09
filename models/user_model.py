@@ -1,6 +1,6 @@
 import uuid
 from enum import Enum
-from sqlalchemy import Column, String, UUID
+from sqlalchemy import Column, String, UUID, DateTime, func
 from database import Base
 from sqlalchemy.dialects.postgresql import ENUM
 
@@ -17,6 +17,8 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     password = Column(String)
     role = Column(ENUM(RoleEnum))
+    created_at = Column(DateTime(), default=func.now())
+    updated_at = Column(DateTime(), onupdate=func.now())
 
 
 

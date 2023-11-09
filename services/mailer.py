@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 from fastapi_mail import FastMail, MessageSchema, MessageType
 from email_config import conf
-
 from rq import Queue
 from redis import Redis
 
@@ -21,4 +20,6 @@ async def send_email(to: str, subject: str, message: str):
     )
     fm = FastMail(conf)
     await fm.send_message(message)
+
+
 

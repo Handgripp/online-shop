@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, Depends, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
-from controller.auth import check_token_bearer
+from controller.auth_controller import check_token_bearer
 from database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import DataError
@@ -87,6 +87,7 @@ async def add_products_to_cart(purchased_products: AddProductToCart, db: Session
         cart = await CartRepository.get_cart_by_id(db, purchased_products.cart_id)
 
         if not product.quantity >= purchased_products.quantity:
+            
             raise HTTPException(status_code=400, detail="Not enough quantity of this product available")
 
         product_to_cart = await CartRepository.add_products_to_cart(db, cart.id,
