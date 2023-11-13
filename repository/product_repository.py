@@ -1,6 +1,4 @@
 from sqlalchemy import update
-
-from database import SessionLocal
 from models.product_model import Product
 from sqlalchemy.orm import Session
 
