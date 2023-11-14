@@ -65,9 +65,9 @@ async def create_cart(db: Session = Depends(get_db),
         check_token_bearer(token)
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user = await UserRepository.get_user_by_email(db, payload.get("user"))
-        # cart_id = CartRepository.get_cart_by_user_id(db, user.id)
-        # if cart_id:
-        #     raise HTTPException(status_code=400, detail="You already have one cart")
+        cart_id = await CartRepository.get_cart_by_user_id(db, user.id)
+        if cart_id:
+            raise HTTPException(status_code=400, detail="You already have one cart")
 
         cart = await CartRepository.create_cart(db, user.id)
         return cart

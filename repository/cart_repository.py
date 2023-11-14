@@ -31,7 +31,6 @@ class CartRepository:
 
     @staticmethod
     async def get_cart_by_user_id(db: Session, user_id):
-
         cart = db.query(Cart).filter_by(user_id=user_id).first()
         return cart
 
