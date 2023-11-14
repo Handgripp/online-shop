@@ -57,7 +57,7 @@ async def create_product(add_product_to_db: ProductCreate, db: Session = Depends
         raise HTTPException(status_code=400, detail="Invalid data: " + str(e))
 
 
-@router.post("/shop/cart")
+@router.post("/shop/carts")
 async def create_cart(db: Session = Depends(get_db),
                       credentials: HTTPAuthorizationCredentials = Security(security)):
     try:
@@ -79,8 +79,8 @@ async def create_cart(db: Session = Depends(get_db),
         raise HTTPException(status_code=400, detail="Invalid data: " + str(e))
 
 
-@router.post("/shop")
-async def add_products_to_cart(purchased_products: AddProductToCart, db: Session = Depends(get_db),
+@router.post("/shop/carts/<cart_id>/assign-product")
+async def add_products_to_cart(cart_id: str, purchased_products: AddProductToCart, db: Session = Depends(get_db),
                                credentials: HTTPAuthorizationCredentials = Security(security)):
     try:
         token = credentials.credentials
@@ -89,7 +89,7 @@ async def add_products_to_cart(purchased_products: AddProductToCart, db: Session
 
         product = await ProductRepository.get_product_by_name(db, purchased_products.product_name)
         user = await UserRepository.get_user_by_email(db, payload.get("user"))
-        cart = await CartRepository.get_cart_by_id(db, purchased_products.cart_id)
+        cart = await CartRepository.get_cart_by_id(db, cart_id)
 
         if not product.quantity >= purchased_products.quantity:
             await NotificationRepository.create_notification(db, user.id, product.id)

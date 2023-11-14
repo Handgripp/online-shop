@@ -20,7 +20,7 @@ security = HTTPBearer()
 router = APIRouter()
 
 
-@router.post("/shop/category")
+@router.post("/shop/categories")
 async def create_category(category: CategoryCreate, db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Security(security)):
     try:
         token = credentials.credentials
