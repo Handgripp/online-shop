@@ -17,6 +17,9 @@ services:
     depends_on:
       - redis
     command: uvicorn main:app --host 0.0.0.0 --port 8000
+    volumes:
+      - .:/app
+      - /app/media
 
   worker:
     build: .

@@ -1,26 +1,4 @@
-from pydantic import BaseModel, UUID4
-
-
-class ProductCreate(BaseModel):
-    name: str
-    description: str
-    price: int
-    quantity: int
-    category_name: str
-
-    model_config = {
-        "json_schema_extra": {
-            "examples": [
-                {
-                    "name": "KTM",
-                    "description": "Fast",
-                    "price": 120,
-                    "quantity": 12,
-                    "category_name": "Cross"
-                }
-            ]
-        }
-    }
+from pydantic import BaseModel
 
 
 class AddProductToCart(BaseModel):
