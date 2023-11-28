@@ -1,4 +1,3 @@
-from sqlalchemy import update
 from models.product_model import Image
 from sqlalchemy.orm import Session
 

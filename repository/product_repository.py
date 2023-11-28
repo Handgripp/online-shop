@@ -25,7 +25,6 @@ class ProductRepository:
         product = db.query(Product).filter_by(name=product_name).first()
         return product
 
-
     @staticmethod
     async def update_cart_value(db: Session, updated_quantity, product_id):
         statement = update(Product).filter(Product.id == product_id).values(quantity=updated_quantity)

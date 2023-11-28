@@ -1,5 +1,4 @@
 import asyncio
-import io
 import os
 from uuid import UUID
 import shutil
@@ -8,7 +7,6 @@ from fastapi import APIRouter, HTTPException, Depends, Security, UploadFile, Fil
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
 from fastapi.responses import FileResponse
-
 from controller.auth_controller import check_token_bearer
 from database import get_db
 from sqlalchemy.orm import Session
@@ -21,7 +19,6 @@ from repository.user_repository import UserRepository
 from schemas.product_schemas import AddProductToCart
 from repository.product_repository import ProductRepository
 from services.mailer import queue, send_email
-
 
 
 load_dotenv()

@@ -26,7 +26,7 @@ class TransactionRepository:
 
     @staticmethod
     async def confirm(db: Session, transaction_id):
-        statement = update(Transaction).filter(Transaction.id == transaction_id).values(is_paid=True)
+        statement = update(Transaction).filter(Transaction.id == transaction_id).values(status=True)
         db.execute(statement)
         db.commit()
 

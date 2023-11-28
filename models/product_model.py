@@ -1,6 +1,5 @@
 import uuid
 from sqlalchemy import Column, String, UUID, ForeignKey, Integer, DateTime, func, LargeBinary
-
 from database import Base
 
 

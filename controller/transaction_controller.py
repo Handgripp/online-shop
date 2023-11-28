@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from fastapi import APIRouter, HTTPException, Depends, Security
+from fastapi import APIRouter, HTTPException, Depends, Security, Query
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
 from controller.auth_controller import check_token_bearer
@@ -53,7 +53,7 @@ async def create_transaction(transaction: TransactionCreate, db: Session = Depen
 
         queue.enqueue(send_email, user.email, "Confirm your purchase in the store",
                       f"Pay now, click a link: "
-                      f"http://127.0.0.1:8000/shop/transactions/payment-confirmation/{encoded_jwt}")
+                      f"http://127.0.0.1:8000/shop/transactions/payment-confirmation?token={encoded_jwt}")
 
         raise HTTPException(status_code=200, detail="Send message to your email")
 
@@ -63,8 +63,8 @@ async def create_transaction(transaction: TransactionCreate, db: Session = Depen
         raise HTTPException(status_code=400, detail="Invalid data: " + str(e))
 
 
-@router.get("/shop/transactions/payment-confirmation/{token}")
-async def confirm_email(token: str, db: Session = Depends(get_db)):
+@router.get("/shop/transactions/payment-confirmation/")
+async def confirm_email(token: str = Query(...), db: Session = Depends(get_db)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user = await UserRepository.get_user_by_id(db, payload.get("id"))
